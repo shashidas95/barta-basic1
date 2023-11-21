@@ -77,7 +77,7 @@
                                                         <a href="{{ route('post.edit', ['id' => $user->id]) }}"
                                                             class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                                                             role="menuitem" tabindex="-1" id="user-menu-item-0">Edit</a>
-                                                        <a href="{{ route('post.delete', ['id' => $user->id]) }}"
+                                                        <a href="{{ route('post.delete', ['id' => $post->id]) }}"
                                                             class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                                                             role="menuitem" tabindex="-1" id="user-menu-item-1">Delete</a>
                                                     </div>

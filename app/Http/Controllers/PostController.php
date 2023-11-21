@@ -18,9 +18,9 @@ class PostController extends Controller
             ->select('u.*', 'p.*')
             ->get();
 
-        $posts = DB::table('posts')->orderBy("created_at", "desc")->get();
+        $posts = DB::table('posts')->get();
 
-        return view("post.posts", compact("posts", "users"));
+        return view("post.posts", compact(["posts", "users"]));
     }
     public function showPost(Request $request)
     {
@@ -108,20 +108,24 @@ class PostController extends Controller
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
-    public function deletePost($id)
+    public function deletePost(Request $request, $id)
     {
+        // Retrieve the post by ID
         $post = DB::table('posts')->where('id', $id)->first();
-        // If it's a GET request, display the confirmation form
-        if (request()->isMethod('get')) {
-            return view('post.delete', ['post' => $post]);
-        }
-        $user = Auth::user();
-        // Check if the logged-in user is the author of the post
-        if ($user->id !== $post->user_id) {
-            return redirect()->route('post.show')->with('error', 'Unauthorized');
-        }
 
-        DB::table("posts")->where('user_id', $user->id)->delete();
-        return redirect()->route('post.show')->with('success', 'Post deleted successfully');
+        // Check if the post exists
+        if ($post) {
+            // Delete the associated image
+            if ($post->photo_path) {
+                Storage::disk('public')->delete('images/' . basename($post->photo_path));
+            }
+
+            // Delete the post from the database
+            DB::table('posts')->where('id', $id)->delete();
+
+            return redirect()->route('post.show')->with('success', 'Post deleted successfully');
+        } else {
+            return redirect()->route('post.show')->with('error', 'Post not found');
+        }
     }
 }
